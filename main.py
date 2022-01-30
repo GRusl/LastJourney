@@ -44,6 +44,8 @@ class MenuApp(App):
     def draw(self):
         h, w = self.parent.screen.get_size()
 
+        fon = pygame.transform.scale(pygame.image.load('images\menu_fon.png'), (h, w))
+        self.parent.screen.blit(fon, (0, 0))
         pygame.draw.aaline(self.parent.screen, (255, 255, 255), [220, 0], [220, w])
 
         title = pygame.font.SysFont('arial', 50).render('Last Journey', True, (255, 255, 255))
