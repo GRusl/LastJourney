@@ -3,11 +3,11 @@ from VNEPy.VNE2D.functions import *
 from VNEPy.VNE2D.interactions import ExampleButton
 
 
-class TestApp(App):
+class GameApp(App):
     def __init__(self, parent):
         super().__init__(parent)
 
-        self.buttons.append(ExampleButton(self.parent, lambda w, h: (300, 400), (200, 50),
+        self.buttons.append(ExampleButton(self.parent, (300, 400), (200, 50),
                                           text='<<<', execute=lambda: self.parent.set_active_window('menu')))
 
 
@@ -32,7 +32,7 @@ class MenuApp(App):
 
         # h, w = self.parent.screen.get_size()
 
-        for n, (i, f) in enumerate((('Новая игра', lambda: print(1)),
+        for n, (i, f) in enumerate((('Новая игра', lambda: self.parent.set_active_window('game')),
                                ('Загрузить', lambda: print(2)),
                                ('Настройки', lambda: self.parent.set_active_window('settings')),
                                ('Об игре', lambda: print(3)))):
@@ -69,7 +69,7 @@ class VNEApp:
         self.active_window = 'menu'
         self.windows = {
             'menu': MenuApp(self),
-            'test': TestApp(self),
+            'game': GameApp(self),
             'settings': SettingApp(self)
         }
 
