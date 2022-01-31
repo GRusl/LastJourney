@@ -1,3 +1,5 @@
+import sys
+
 from VNEPy.VNE2D.app import App
 from VNEPy.VNE2D.functions import *
 from VNEPy.VNE2D.interactions import ExampleButton
@@ -35,7 +37,8 @@ class MenuApp(App):
         for n, (i, f) in enumerate((('Новая игра', lambda: self.parent.set_active_window('game')),
                                ('Загрузить', lambda: print(2)),
                                ('Настройки', lambda: self.parent.set_active_window('settings')),
-                               ('Об игре', lambda: print(3)))):
+                               ('Об игре', lambda: print(3)),
+                               ('Выход', lambda: sys.exit()))):
             self.buttons.append(ExampleButton(self.parent, (10, 10 + 55 * n), (200, 50),
                                               text=i, execute=f))
 
