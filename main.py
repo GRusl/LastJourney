@@ -8,9 +8,13 @@ from VNEPy.VNE2D.interactions import ExampleButton
 class Load_image(App):
     def fon(self):
         h, w = self.parent.screen.get_size()
-
-        fon = pygame.transform.scale(pygame.image.load('images\menu_fon.png'), (h, w))
+        fon = pygame.transform.scale(pygame.image.load('images/menu_fon.png'), (h, w))
         self.parent.screen.blit(fon, (0, 0))
+
+    def about_game(self):
+        h, w = self.parent.screen.get_size()
+        image = pygame.transform.scale(pygame.image.load('images/aboutgame.png'), (h, w))
+        self.parent.screen.blit(image, (0, 0))
 
 
 class GameApp(App):
@@ -46,7 +50,7 @@ class about_game(App):
                                           text='<<<', execute=lambda: self.parent.set_active_window('menu')))
 
     def draw(self):
-        Load_image.fon(self)
+        Load_image.about_game(self)
 
 
 class MenuApp(App):
