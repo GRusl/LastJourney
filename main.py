@@ -36,7 +36,7 @@ class SettingApp(App):
         self.buttons.append(ExampleButton(self.parent, (10, 10), (50, 50),
                                           text='<<<', execute=lambda: self.parent.set_active_window('menu')))
         
-        # h, w = self.parent.screen.get_size()
+        h, w = self.parent.screen.get_size()
         for n, (i, f) in enumerate((('Полноэкранный', lambda: init_windows(self.parent, pygame.FULLSCREEN)),
                                     ('Фиксированный', lambda: init_windows(self.parent, 0)),
                                     ('Настраиваемый', lambda: init_windows(self.parent, pygame.RESIZABLE)))):
