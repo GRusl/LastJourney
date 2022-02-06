@@ -21,6 +21,8 @@ class GameApp(App):
     def __init__(self, parent):
         super().__init__(parent)
 
+        # self.fon_img = pygame.image.load('images/menu_fon.png')
+
         self.buttons.append(ExampleButton(self.parent, (300, 400), (200, 50),
                                           text='<<<', execute=lambda: self.parent.set_active_window('menu')))
 
@@ -108,10 +110,18 @@ class VNEApp:
         self.active_window = val
 
     def draw(self):
+        self.screen.fill('black')
+
         if 'fon_img' in self.windows[self.active_window].__dict__:
-            h, w = self.screen.get_size()
-            fon = pygame.transform.scale(self.windows[self.active_window].fon_img, (h, w))
-            self.screen.blit(fon, (0, 0))
+            img_w, img_h = self.windows[self.active_window].fon_img.get_size()
+            win_w, win_h = self.screen.get_size()
+
+            difference = min(win_w - img_w, win_h - img_h, key=abs)
+
+            fon = pygame.transform.scale(self.windows[self.active_window].fon_img,
+                                         (img_w + difference, img_h + difference))
+
+            self.screen.blit(fon, (-(img_w + difference - win_w) // 2, -(img_h + difference - win_h) // 2))
 
         self.windows[self.active_window].draws()
 

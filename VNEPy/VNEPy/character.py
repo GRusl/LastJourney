@@ -12,7 +12,7 @@ class Character:
         return self.name, self.name_color
 
     def get_img(self, title: str):
-        path = f'/img/characters/{self.img_path}/'
+        path = f'/images/characters/{self.img_path}/'
         if os.path.exists(path):
             for i in os.listdir(path="."):
                 print(i)
