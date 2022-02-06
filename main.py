@@ -21,10 +21,16 @@ class GameApp(App):
     def __init__(self, parent):
         super().__init__(parent)
 
-        # self.fon_img = pygame.image.load('images/menu_fon.png')
+        self.fon_img = pygame.image.load('images/menu_fon.png')
 
-        self.buttons.append(ExampleButton(self.parent, (300, 400), (200, 50),
-                                          text='<<<', execute=lambda: self.parent.set_active_window('menu')))
+        self.buttons.append(ExampleButton(self.parent, (10, 10), (200, 25), text='Вернуться в главное меню',
+                                          execute=lambda: self.parent.set_active_window('menu'), size_text=15))
+
+    def draw(self):
+        h, w = self.parent.screen.get_size()
+
+        pygame.draw.rect(self.parent.screen, (0, 0, 0), (0, w - 100, h, w))
+        pygame.draw.rect(self.parent.screen, (100, 100, 100), (0, w - 100, h, 10))
 
 
 class SettingApp(App):
@@ -36,7 +42,7 @@ class SettingApp(App):
         self.buttons.append(ExampleButton(self.parent, (10, 10), (50, 50),
                                           text='<<<', execute=lambda: self.parent.set_active_window('menu')))
         
-        h, w = self.parent.screen.get_size()
+        # h, w = self.parent.screen.get_size()
         for n, (i, f) in enumerate((('Полноэкранный', lambda: init_windows(self.parent, pygame.FULLSCREEN)),
                                     ('Фиксированный', lambda: init_windows(self.parent, 0)),
                                     ('Настраиваемый', lambda: init_windows(self.parent, pygame.RESIZABLE)))):
@@ -113,15 +119,15 @@ class VNEApp:
         self.screen.fill('black')
 
         if 'fon_img' in self.windows[self.active_window].__dict__:
-            img_w, img_h = self.windows[self.active_window].fon_img.get_size()
-            win_w, win_h = self.screen.get_size()
+            img_h, img_w = self.windows[self.active_window].fon_img.get_size()
+            win_h, win_w = self.screen.get_size()
 
-            difference = min(win_w - img_w, win_h - img_h, key=abs)
+            difference = min(win_h - img_h, win_w - img_w, key=abs)
 
             fon = pygame.transform.scale(self.windows[self.active_window].fon_img,
-                                         (img_w + difference, img_h + difference))
+                                         (img_h + difference, img_w + difference))
 
-            self.screen.blit(fon, (-(img_w + difference - win_w) // 2, -(img_h + difference - win_h) // 2))
+            self.screen.blit(fon, (-(img_h + difference - win_h) // 2, -(img_w + difference - win_w) // 2))
 
         self.windows[self.active_window].draws()
 
