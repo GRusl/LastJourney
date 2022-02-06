@@ -1,6 +1,20 @@
+import sys
+
 from VNEPy.VNE2D.app import App
 from VNEPy.VNE2D.functions import *
 from VNEPy.VNE2D.interactions import ExampleButton
+
+
+class Load_image(App):
+    def fon(self):
+        h, w = self.parent.screen.get_size()
+        fon = pygame.transform.scale(pygame.image.load('images/menu_fon.png'), (h, w))
+        self.parent.screen.blit(fon, (0, 0))
+
+    def about_game(self):
+        h, w = self.parent.screen.get_size()
+        image = pygame.transform.scale(pygame.image.load('images/aboutgame.png'), (h, w))
+        self.parent.screen.blit(image, (0, 0))
 
 
 class GameApp(App):
@@ -15,6 +29,8 @@ class SettingApp(App):
     def __init__(self, parent):
         super().__init__(parent)
 
+        self.fon_img = pygame.image.load('images/menu_fon.png')
+
         self.buttons.append(ExampleButton(self.parent, (10, 10), (50, 50),
                                           text='<<<', execute=lambda: self.parent.set_active_window('menu')))
         
@@ -26,16 +42,29 @@ class SettingApp(App):
                                               text=i, execute=f))
 
 
+class about_game(App):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        self.fon_img = pygame.image.load('images/menu_fon.png')
+
+        self.buttons.append(ExampleButton(self.parent, (10, 10), (50, 50),
+                                          text='<<<', execute=lambda: self.parent.set_active_window('menu')))
+
+
 class MenuApp(App):
     def __init__(self, parent):
         super().__init__(parent)
 
         # h, w = self.parent.screen.get_size()
 
+        self.fon_img = pygame.image.load('images/menu_fon.png')
+
         for n, (i, f) in enumerate((('Новая игра', lambda: self.parent.set_active_window('game')),
                                ('Загрузить', lambda: print(2)),
                                ('Настройки', lambda: self.parent.set_active_window('settings')),
-                               ('Об игре', lambda: print(3)))):
+                               ('Об игре', lambda: self.parent.set_active_window('about_game')),
+                               ('Выход', lambda: sys.exit()))):
             self.buttons.append(ExampleButton(self.parent, (10, 10 + 55 * n), (200, 50),
                                               text=i, execute=f))
 
@@ -44,6 +73,7 @@ class MenuApp(App):
     def draw(self):
         h, w = self.parent.screen.get_size()
 
+        # Load_image.fon(self)
         pygame.draw.aaline(self.parent.screen, (255, 255, 255), [220, 0], [220, w])
 
         title = pygame.font.SysFont('arial', 50).render('Last Journey', True, (255, 255, 255))
@@ -70,14 +100,18 @@ class VNEApp:
         self.windows = {
             'menu': MenuApp(self),
             'game': GameApp(self),
-            'settings': SettingApp(self)
+            'settings': SettingApp(self),
+            'about_game': about_game(self)
         }
 
     def set_active_window(self, val):
         self.active_window = val
 
     def draw(self):
-        self.screen.fill('black')
+        if 'fon_img' in self.windows[self.active_window].__dict__:
+            h, w = self.screen.get_size()
+            fon = pygame.transform.scale(self.windows[self.active_window].fon_img, (h, w))
+            self.screen.blit(fon, (0, 0))
 
         self.windows[self.active_window].draws()
 
@@ -87,6 +121,8 @@ class VNEApp:
         self.run_while = True
         while self.run_while:
             self.draw()  # We are rendering
+
+            print(self.clock.get_fps())
 
             self.windows[self.active_window].runs()
 
