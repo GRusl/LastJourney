@@ -5,6 +5,7 @@ from VNEPy.VNE2D.functions import *
 from VNEPy.VNE2D.interactions import ExampleButton
 
 
+
 class Load_image(App):
     def fon(self):
         h, w = self.parent.screen.get_size()
@@ -15,6 +16,24 @@ class Load_image(App):
         h, w = self.parent.screen.get_size()
         image = pygame.transform.scale(pygame.image.load('images/aboutgame.png'), (h, w))
         self.parent.screen.blit(image, (0, 0))
+
+
+class mouse(pygame.sprite.Sprite):
+    image = pygame.image.load('images/arrow.png')
+    image2 = pygame.image.load('images/arrow_1.png')
+
+    def __init__(self, group):
+        super().__init__(group)
+        # НЕОБХОДИМО вызвать конструктор родительского класса Sprite.
+        # Это очень важно !!!
+        self.image = mouse.image2
+        self.rect = self.image.get_rect()
+        print(1)
+
+    def update(self):
+        pos = pygame.mouse.get_pos()
+        self.rect.x = pos[0] - 12
+        self.rect.y = pos[1] - 12
 
 
 class GameApp(App):
@@ -104,6 +123,9 @@ class VNEApp:
 
         pygame.display.set_caption('Program title')
 
+        self.all_sprites = pygame.sprite.Group()
+        mouse(self.all_sprites)
+
         self.active_window = 'menu'
         self.windows = {
             'menu': MenuApp(self),
@@ -117,6 +139,7 @@ class VNEApp:
 
     def draw(self):
         self.screen.fill('black')
+        pygame.mouse.set_visible(False)
 
         if 'fon_img' in self.windows[self.active_window].__dict__:
             img_h, img_w = self.windows[self.active_window].fon_img.get_size()
@@ -130,6 +153,9 @@ class VNEApp:
             self.screen.blit(fon, (-(img_h + difference - win_h) // 2, -(img_w + difference - win_w) // 2))
 
         self.windows[self.active_window].draws()
+
+        self.all_sprites.draw(self.screen)
+        self.all_sprites.update()
 
         pygame.display.flip()
 
