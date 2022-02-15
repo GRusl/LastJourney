@@ -34,8 +34,8 @@ class ExampleButton(Button):
     def __init__(self, parent, point, size, size_text=20, text=None, execute=None):
         super().__init__(parent, point, size, size_text, text, execute)
 
-    def draw(self, text_color=(255, 0, 0), under_gun=0):
-        colors = (((255, 255, 255), (200, 200, 200)), ((200, 200, 200), (100, 100, 100)),
+    def draw(self, text_color=(255, 255, 255), under_gun=0):
+        colors = (((119, 136, 153), (47, 79, 79)), ((80, 200, 200), (100, 100, 100)),
                   ((100, 100, 100), (50, 50, 50)))[under_gun]
 
         point = self.get_point()
@@ -43,7 +43,7 @@ class ExampleButton(Button):
         text = pygame.font.SysFont('arial', self.size_text).render(self.text, True, text_color)
 
         pygame.draw.rect(self.parent.screen, colors[0], list(point) + list(self.size))
-        pygame.draw.rect(self.parent.screen, colors[1], list(point) + list(self.size), 3)
+        pygame.draw.rect(self.parent.screen, colors[1], list(point) + list(self.size), 2)
 
         h, w = text.get_size()
         x, y = point
