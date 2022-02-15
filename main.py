@@ -6,7 +6,7 @@ from VNEPy.VNE2D.interactions import ExampleButton
 
 
 
-class Load_image(App):
+class Load_image(App):  # load some images
     def fon(self):
         h, w = self.parent.screen.get_size()
         fon = pygame.transform.scale(pygame.image.load('images/menu_fon.png'), (h, w))
@@ -18,14 +18,12 @@ class Load_image(App):
         self.parent.screen.blit(image, (0, 0))
 
 
-class mouse(pygame.sprite.Sprite):
+class mouse(pygame.sprite.Sprite):  # load and render mouse arrow
     image = pygame.image.load('images/arrow.png')
     image2 = pygame.image.load('images/arrow_1.png')
 
     def __init__(self, group):
         super().__init__(group)
-        # НЕОБХОДИМО вызвать конструктор родительского класса Sprite.
-        # Это очень важно !!!
         self.image = mouse.image2
         self.rect = self.image.get_rect()
         print(1)
@@ -36,7 +34,7 @@ class mouse(pygame.sprite.Sprite):
         self.rect.y = pos[1] - 12
 
 
-class GameApp(App):
+class GameApp(App):  # game
     def __init__(self, parent):
         super().__init__(parent)
 
@@ -52,7 +50,7 @@ class GameApp(App):
         pygame.draw.rect(self.parent.screen, (100, 100, 100), (0, w - 100, h, 10))
 
 
-class SettingApp(App):
+class SettingApp(App):  # screen settings (full_screen, fixed_screen, adjustable_screen)
     def __init__(self, parent):
         super().__init__(parent)
 
@@ -69,7 +67,7 @@ class SettingApp(App):
                                               text=i, execute=f))
 
 
-class about_game(App):
+class about_game(App):  # titles about game
     def __init__(self, parent):
         super().__init__(parent)
 
@@ -79,7 +77,7 @@ class about_game(App):
                                           text='<<<', execute=lambda: self.parent.set_active_window('menu')))
 
 
-class MenuApp(App):
+class MenuApp(App):  # menu
     def __init__(self, parent):
         super().__init__(parent)
 
