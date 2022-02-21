@@ -15,10 +15,14 @@ class App:
             if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
                     self.buttons_press()
+                    self.press(event)
 
         self.run()
 
     def run(self):
+        pass
+
+    def press(self, event):
         pass
 
     def buttons_press(self):

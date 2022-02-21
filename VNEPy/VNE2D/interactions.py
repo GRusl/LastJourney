@@ -20,7 +20,7 @@ class Button:
     def get_point(self):
         # print(self.point(*self.parent.screen.get_size()), self.text)
         if type(self.point[0]) == str:
-            h, w = self.parent.screen.get_size()
+            w, h = self.parent.screen.get_size()
             return tuple(map(lambda x: eval(x.replace('h', str(h)).replace('w', str(w))), self.point))
         else:
             return self.point

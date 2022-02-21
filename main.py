@@ -4,18 +4,9 @@ from VNEPy.VNE2D.app import App
 from VNEPy.VNE2D.functions import *
 from VNEPy.VNE2D.interactions import ExampleButton
 
+from plot import fragment
 
-
-class Load_image(App):  # load some images
-    def fon(self):
-        h, w = self.parent.screen.get_size()
-        fon = pygame.transform.scale(pygame.image.load('images/menu_fon.png'), (h, w))
-        self.parent.screen.blit(fon, (0, 0))
-
-    def about_game(self):
-        h, w = self.parent.screen.get_size()
-        image = pygame.transform.scale(pygame.image.load('images/aboutgame.png'), (h, w))
-        self.parent.screen.blit(image, (0, 0))
+from VNEPy.VNEPy.words import Phrase
 
 
 class mouse(pygame.sprite.Sprite):  # load and render mouse arrow
@@ -26,7 +17,6 @@ class mouse(pygame.sprite.Sprite):  # load and render mouse arrow
         super().__init__(group)
         self.image = mouse.image2
         self.rect = self.image.get_rect()
-        print(1)
 
     def update(self):
         pos = pygame.mouse.get_pos()
@@ -38,16 +28,47 @@ class GameApp(App):  # game
     def __init__(self, parent):
         super().__init__(parent)
 
+        self.fragments = [fragment.get()]
+        self.i_fragments = 0
+        self.i_fragment = 0
+
+        self.text = "342434234"
+        self.color_text = (255, 255, 255)
+
         self.fon_img = pygame.image.load('images/menu_fon.png')
 
-        self.buttons.append(ExampleButton(self.parent, (10, 10), (200, 25), text='Вернуться в главное меню',
+        self.buttons.append(ExampleButton(self.parent, ('5', 'h - 30'), (200, 25), text='Вернуться в главное меню',
                                           execute=lambda: self.parent.set_active_window('menu'), size_text=15))
 
-    def draw(self):
-        h, w = self.parent.screen.get_size()
+        self.buttons.append(ExampleButton(self.parent, ('210', 'h - 30'), (200, 25), text='Сохранить',
+                                          execute=lambda: print(10), size_text=15))
 
-        pygame.draw.rect(self.parent.screen, (0, 0, 0), (0, w - 100, h, w))
-        pygame.draw.rect(self.parent.screen, (100, 100, 100), (0, w - 100, h, 10))
+    def press(self, event):
+        if event.pos[1] < self.parent.screen.get_size()[1]:
+            if self.i_fragment == len(self.fragments[self.i_fragments]):
+                self.i_fragment = 0
+                self.i_fragments += 1
+
+            if self.i_fragments == len(self.fragments):
+                self.i_fragments = 0
+                self.parent.set_active_window('menu')
+            else:
+                action = self.fragments[self.i_fragments][self.i_fragment]
+                if isinstance(action, Phrase):
+                    self.text = f'{action.character.name}: {action.text}'
+                    self.color_text = action.character.name_color
+
+            self.i_fragment += 1
+
+    def draw(self):
+        w, h = self.parent.screen.get_size()
+
+        pygame.draw.rect(self.parent.screen, (0, 0, 0), (0, h - 100, w, h))
+        pygame.draw.rect(self.parent.screen, (100, 100, 100), (0, h - 100, w, 10))
+
+        text = pygame.font.SysFont('arial', 20).render(self.text, True, self.color_text)
+        w_text, h_text = text.get_size()
+        self.parent.screen.blit(text, (20, h - 85 + h_text // 2))
 
 
 class SettingApp(App):  # screen settings (full_screen, fixed_screen, adjustable_screen)
@@ -59,11 +80,11 @@ class SettingApp(App):  # screen settings (full_screen, fixed_screen, adjustable
         self.buttons.append(ExampleButton(self.parent, (10, 10), (50, 50),
                                           text='<<<', execute=lambda: self.parent.set_active_window('menu')))
         
-        # h, w = self.parent.screen.get_size()
+        # w, h = self.parent.screen.get_size()
         for n, (i, f) in enumerate((('Полноэкранный', lambda: init_windows(self.parent, pygame.FULLSCREEN)),
                                     ('Фиксированный', lambda: init_windows(self.parent, 0)),
                                     ('Настраиваемый', lambda: init_windows(self.parent, pygame.RESIZABLE)))):
-            self.buttons.append(ExampleButton(self.parent, (f'h // 2 - 230 + (155 * {n})', '20'), (150, 40),
+            self.buttons.append(ExampleButton(self.parent, (f'w // 2 - 230 + (155 * {n})', '20'), (150, 40),
                                               text=i, execute=f))
 
 
@@ -81,7 +102,7 @@ class MenuApp(App):  # menu
     def __init__(self, parent):
         super().__init__(parent)
 
-        # h, w = self.parent.screen.get_size()
+        # w, h = self.parent.screen.get_size()
 
         self.fon_img = pygame.image.load('images/menu_fon.png')
 
@@ -96,7 +117,7 @@ class MenuApp(App):  # menu
         # init_windows(self.parent, pygame.RESIZABLE)
 
     def draw(self):
-        h, w = self.parent.screen.get_size()
+        w, h = self.parent.screen.get_size()
 
         # Load_image.fon(self)
         pygame.draw.aaline(self.parent.screen, (255, 255, 255), [220, 0], [220, w])
@@ -104,11 +125,11 @@ class MenuApp(App):  # menu
         title = pygame.font.SysFont('arial', 50).render('Last Journey', True, (255, 255, 255))
         v = pygame.font.SysFont('arial', 20).render('V0.0.0', True, (255, 255, 255))
 
-        v_h, v_w = v.get_size()
-        title_h, title_w = title.get_size()
+        v_w, v_h = v.get_size()
+        title_w, title_h = title.get_size()
 
-        self.parent.screen.blit(v, (h - v_h - 20, w - v_w - 20))
-        self.parent.screen.blit(title, (h - title_h - 20, w - v_w - title_w - 20))
+        self.parent.screen.blit(v, (w - v_w - 20, h - v_h - 20))
+        self.parent.screen.blit(title, (w - title_w - 20, h - v_h - title_h - 20))
 
 
 class VNEApp:
@@ -162,7 +183,7 @@ class VNEApp:
         while self.run_while:
             self.draw()  # We are rendering
 
-            print(self.clock.get_fps())
+            # print(self.clock.get_fps())
 
             self.windows[self.active_window].runs()
 

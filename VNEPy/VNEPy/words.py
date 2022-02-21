@@ -10,8 +10,21 @@ class Interlocutor:
     pass
 
 
+class Phrase:
+    from . import character
+
+    def __init__(self, text: str, character: character.Character):
+        self.text = text
+        self.character = character
+
+    def get(self):
+        return self.character, self.text
+
+
 class Fragment:
-    def __init__(self, fon_img: str):
+    def __init__(self, fragment_name: str, fon_img: str = ""):
+        self.fragment_name = fragment_name
+
         self.last_fragment_name = None
         self.actions = []
 
@@ -22,6 +35,4 @@ class Fragment:
         self.last_fragment_name = title
 
     def get(self):
-        for i in self.actions:
-            if i:
-                yield i
+        return self.actions
