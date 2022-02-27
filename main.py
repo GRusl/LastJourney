@@ -4,9 +4,9 @@ from VNEPy.VNE2D.app import App  # Импорт приложения
 from VNEPy.VNE2D.functions import *  # Импорт вспомогательных функций
 from VNEPy.VNE2D.interactions import ExampleButton  # Импорт кнопки
 
-from plot import fragment  # Импорт сюжета
+from plot import plot  # Импорт сюжета
 
-from VNEPy.VNEPy.words import Phrase  # Импорт инструментов составления сюжета
+from VNEPy.VNEPy.words import Phrase, Choice  # Импорт инструментов составления сюжета
 
 
 class Mouse(pygame.sprite.Sprite):  # Класс кастомизированной мышки
@@ -29,13 +29,15 @@ class GameApp(App):  # Приложение игры
         super().__init__(parent)
 
         # Сюжет
-        self.fragments = [fragment.get()]
-        self.i_fragments = 0
+        self.plot = plot
+        self.i_fragments = '123'
         self.i_fragment = 0
 
         # Данные вывода
         self.text = "342434234"
         self.color_text = (255, 255, 255)
+
+        self.choice_buttons = []
 
         self.fon_img = pygame.image.load('images/menu_fon.png')
 
@@ -48,6 +50,27 @@ class GameApp(App):  # Приложение игры
 
     def press(self, event):  # Событие нажатия мыши
         if event.pos[1] < self.parent.screen.get_size()[1]:
+            print(self.plot, self.i_fragments, self.i_fragment)
+            if self.i_fragment == len(self.plot[self.i_fragments]):
+                self.i_fragment -= 1
+            else:
+                action = self.plot[self.i_fragments].get()[self.i_fragment]
+                if isinstance(action, Phrase):  # Дейстивие является фразой
+                    self.text = f'{action.character.name}: {action.text}'
+                    self.color_text = action.character.name_color
+
+                    if self.choice_buttons:
+                        for i in self.choice_buttons:
+                            del self.buttons[(self.buttons.index(i))]
+
+                        self.choice_buttons = []
+                elif isinstance(action, Choice):  # Дейстивие является выбором
+                    self.choice_buttons = action.get_buttons(self.parent, self)
+                    self.buttons += self.choice_buttons
+
+            self.i_fragment += 1
+
+            '''
             if self.i_fragment == len(self.fragments[self.i_fragments]):
                 self.i_fragment = 0
                 self.i_fragments += 1
@@ -62,6 +85,7 @@ class GameApp(App):  # Приложение игры
                     self.color_text = action.character.name_color
 
             self.i_fragment += 1
+            '''
 
     def draw(self):  # Отрисовка
         w, h = self.parent.screen.get_size()
@@ -92,6 +116,7 @@ class SettingApp(App):  # screen settings (full_screen, fixed_screen, adjustable
                                     ('Настраиваемый', lambda: init_windows(self.parent, pygame.RESIZABLE)))):
             self.buttons.append(ExampleButton(self.parent, (f'w // 2 - 230 + (155 * {n})', '20'), (150, 40),
                                               text=i, execute=f))
+
 
 class about_game(App):  # Об игре
     def __init__(self, parent):
