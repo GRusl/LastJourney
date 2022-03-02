@@ -2,7 +2,8 @@ from ..VNE2D.interactions import Button
 
 
 class Fon:
-    pass
+    def __init__(self, path):
+        self.path = path
 
 
 class Interlocutor:
@@ -23,8 +24,8 @@ class Choice:
 
             return fun
 
-        return [self.button_type(big_parent, ('w / 2 - 100', f'20 + {n} * 30'), (200, 20), text=text,
-                                 execute=set_i_fragments(link))
+        return [self.button_type(big_parent, ('w / 2 - 100', f'20 + {n} * 30'), (200, 20),
+                                 text=text, execute=set_i_fragments(link))
                 for n, (text, link) in enumerate(self.buttons_description)]
 
 
