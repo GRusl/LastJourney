@@ -6,7 +6,7 @@ from VNEPy.VNE2D.interactions import ExampleButton  # Импорт кнопки
 
 from plot import plot  # Импорт сюжета
 
-from VNEPy.VNEPy.words import Phrase, Choice  # Импорт инструментов составления сюжета
+from VNEPy.VNEPy.words import Phrase, Choice, Fon  # Импорт инструментов составления сюжета
 
 
 class Mouse(pygame.sprite.Sprite):  # Класс кастомизированной мышки
@@ -34,7 +34,7 @@ class GameApp(App):  # Приложение игры
         self.i_fragment = 0
 
         # Данные вывода
-        self.text = "342434234"
+        self.text = "Нажимая на активную область экрана, вы соглашаетесь с всем, что идет дальше)"
         self.color_text = (255, 255, 255)
 
         self.choice_buttons = []
@@ -48,12 +48,11 @@ class GameApp(App):  # Приложение игры
         self.buttons.append(ExampleButton(self.parent, ('210', 'h - 30'), (200, 25), text='Сохранить',
                                           execute=lambda: print(10), size_text=15))
 
-    def press(self, event):  # Событие нажатия мыши
-        if event.pos[1] < self.parent.screen.get_size()[1]:
+    def press(self, event=None):  # Событие нажатия мыши
+        if not event or event.pos[1] < self.parent.screen.get_size()[1]:
+            next_step = False
             print(self.plot, self.i_fragments, self.i_fragment)
-            if self.i_fragment == len(self.plot[self.i_fragments]):
-                self.i_fragment -= 1
-            else:
+            if self.i_fragment < len(self.plot[self.i_fragments]):
                 action = self.plot[self.i_fragments].get()[self.i_fragment]
                 if isinstance(action, Phrase):  # Дейстивие является фразой
                     self.text = f'{action.character.name}: {action.text}'
@@ -67,25 +66,14 @@ class GameApp(App):  # Приложение игры
                 elif isinstance(action, Choice):  # Дейстивие является выбором
                     self.choice_buttons = action.get_buttons(self.parent, self)
                     self.buttons += self.choice_buttons
+                elif isinstance(action, Fon):  # Изменение фона
+                    self.fon_img = pygame.image.load(action.path)
+                    next_step = True
 
-            self.i_fragment += 1
+                self.i_fragment += 1
 
-            '''
-            if self.i_fragment == len(self.fragments[self.i_fragments]):
-                self.i_fragment = 0
-                self.i_fragments += 1
-
-            if self.i_fragments == len(self.fragments):
-                self.i_fragments = 0
-                self.parent.set_active_window('menu')
-            else:
-                action = self.fragments[self.i_fragments][self.i_fragment]
-                if isinstance(action, Phrase):  # Дейстивие является фразой
-                    self.text = f'{action.character.name}: {action.text}'
-                    self.color_text = action.character.name_color
-
-            self.i_fragment += 1
-            '''
+                if next_step:
+                    self.press()
 
     def draw(self):  # Отрисовка
         w, h = self.parent.screen.get_size()
@@ -127,6 +115,22 @@ class about_game(App):  # Об игре
         # Кнопка выхода
         self.buttons.append(ExampleButton(self.parent, (10, 10), (50, 50),
                                           text='<<<', execute=lambda: self.parent.set_active_window('menu')))
+
+    def draw(self):
+        texts = """Постапокалипсис. 
+        Две девочки, Тито и Юри, остаются наедине с мёртвой цивилизацией.
+        Они путешествуют по руинам безжизненных городов в поисках еды и топлива. 
+        Серые и безнадёжные дни сменяют друг друга, но, пока девочки вместе, 
+        даже в самых мрачных моментах они находят что-то светлое.
+        Что же такое "обычная жизнь" для девочек, блуждающих среди руин?""".splitlines()
+
+        y = 60
+        for text_str in texts:
+            text = pygame.font.SysFont('arial', 25).render(text_str.strip(), True, (255, 255, 255))
+            w, h = text.get_size()
+
+            self.parent.screen.blit(text, (30, y))
+            y += h
 
 
 class MenuApp(App):  # Главное меню
