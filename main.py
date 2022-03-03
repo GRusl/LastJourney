@@ -197,15 +197,23 @@ class VNEApp:  # Главное приложение
         self.screen.fill('black')
 
         if 'fon_img' in self.windows[self.active_window].__dict__:
-            img_h, img_w = self.windows[self.active_window].fon_img.get_size()
-            win_h, win_w = self.screen.get_size()
+            img_w, img_h = self.windows[self.active_window].fon_img.get_size()
+            win_w, win_h = self.screen.get_size()
 
-            difference = min(win_h - img_h, win_w - img_w, key=abs)
+            difference = min(win_w - img_w, win_h - img_h, key=abs)
 
             fon = pygame.transform.scale(self.windows[self.active_window].fon_img,
-                                         (img_h + difference, img_w + difference))
+                                         (img_w + difference, img_h + difference))
 
-            self.screen.blit(fon, (-(img_h + difference - win_h) // 2, -(img_w + difference - win_w) // 2))
+            # Сдвиг
+            from math import atan2, cos, sin, degrees, radians
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+
+            deg = radians(degrees(atan2(mouse_y - win_h // 2, mouse_x - win_w // 2)) + 180)
+            r = ((mouse_y - win_h // 2) ** 2 + (mouse_y - win_w // 2) ** 2) ** .5 // 10
+            x, y = int(r * cos(deg)), int(r * sin(deg))
+
+            self.screen.blit(fon, (-(img_w + difference - win_w) // 2 + x, -(img_h + difference - win_h) // 2 + y))
 
         self.windows[self.active_window].draws()
 
