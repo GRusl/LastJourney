@@ -9,7 +9,7 @@ fragment = Fragment('123')
 fragment.add(Phrase("ghvhvghvv", a))
 fragment.add(Phrase("fjkgbnjfgjk", a))
 fragment.add(Fon('./images/arrow.png'))
-fragment.add(Phrase("321", a))
+fragment.add(Phrase("321", a, '22'))
 fragment.add(Choice(ExampleButton, ('10', '30'), ('20', '30')))
 
 fragment2 = Fragment('30')

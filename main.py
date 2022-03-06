@@ -39,13 +39,15 @@ class GameApp(App):  # Приложение игры
 
         self.choice_buttons = []
 
-        self.fon_img = pygame.image.load('images/menu_fon.png')
+        self.fon_img = pygame.image.load('./images/menu_fon.png')
+
+        self.emotion_img = None
 
         # Статичные кнопки приложения
-        self.buttons.append(ExampleButton(self.parent, ('5', 'h - 30'), (200, 25), text='Вернуться в главное меню',
+        self.buttons.append(ExampleButton(self.parent, ('w - 205', 'h - 30'), (200, 25), text='Вернуться в главное меню',
                                           execute=lambda: self.parent.set_active_window('menu'), size_text=15))
 
-        self.buttons.append(ExampleButton(self.parent, ('210', 'h - 30'), (200, 25), text='Сохранить',
+        self.buttons.append(ExampleButton(self.parent, ('w - 410', 'h - 30'), (200, 25), text='Сохранить',
                                           execute=lambda: print(10), size_text=15))
 
     def press(self, event=None):  # Событие нажатия мыши
@@ -57,6 +59,11 @@ class GameApp(App):  # Приложение игры
                 if isinstance(action, Phrase):  # Дейстивие является фразой
                     self.text = f'{action.character.name}: {action.text}'
                     self.color_text = action.character.name_color
+
+                    if action.emotion_title and action.emotion_title in action.character.emotions:
+                        self.emotion_img = action.character.emotions[action.emotion_title]
+                    else:
+                        self.emotion_img = None
 
                     if self.choice_buttons:
                         for i in self.choice_buttons:
@@ -80,12 +87,20 @@ class GameApp(App):  # Приложение игры
 
         # Интерфейс
         pygame.draw.rect(self.parent.screen, (0, 0, 0), (0, h - 100, w, h))
-        pygame.draw.rect(self.parent.screen, (100, 100, 100), (0, h - 100, w, 10))
+        pygame.draw.rect(self.parent.screen, (100, 100, 100), (0, h - 105, w, 5))
+
+        # Эмоция
+        if self.emotion_img:
+            img_w, img_h = self.emotion_img.get_size()
+
+            fon = pygame.transform.scale(self.emotion_img, (img_w // (img_h // 85), 85))
+
+            self.parent.screen.blit(fon, (5, h - 95))
 
         # Игровые даннные
         text = pygame.font.SysFont('arial', 20).render(self.text, True, self.color_text)
         w_text, h_text = text.get_size()
-        self.parent.screen.blit(text, (20, h - 85 + h_text // 2))
+        self.parent.screen.blit(text, (120 if self.emotion_img else 20, h - 85 + h_text // 2))
 
 
 class SettingApp(App):  # screen settings (full_screen, fixed_screen, adjustable_screen)

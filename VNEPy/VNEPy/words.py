@@ -12,7 +12,7 @@ class Interlocutor:
 
 class Choice:
     def __init__(self, button_type: Button, *buttons_description: tuple[str, str]):
-        self.button_type = button_type
+        self.button_type: Button = button_type
         self.buttons_description = buttons_description
         # self.buttons = [button_type() for n, (title, link) in enumerate(buttons_description)]
 
@@ -32,12 +32,14 @@ class Choice:
 class Phrase:
     from . import character
 
-    def __init__(self, text: str, character: character.Character):
+    def __init__(self, text: str, character: character.Character, emotion_title: str = None):
         self.text = text
         self.character = character
 
+        self.emotion_title = emotion_title
+
     def get(self):
-        return self.character, self.text
+        return self.character, self.text, self.emotion_title
 
 
 class Fragment:
